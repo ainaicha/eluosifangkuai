@@ -1,0 +1,42 @@
+.game{
+    width: 200px;
+    height: 400px;
+    background: aliceblue;
+    border-left:1px solid blue;
+    border-right: 1px solid blue;
+    border-bottom: 1px solid blue;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+.next{
+    width: 80px;
+    height: 80px;
+    background: aliceblue;
+    border: 1px solid blue;
+    position: absolute;
+    top: 10;
+    left: 250px;
+}
+.info{
+    position: absolute;
+    top: 100px;
+    left: 250px;
+}
+.none,.block,.down{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    box-sizing: border-box;
+}
+.none{
+    background: aliceblue;
+}
+.block{
+    background: gray;
+    border: 1px solid black;
+}
+.down{
+    background: pink;
+    border:1px solid red;
+}
