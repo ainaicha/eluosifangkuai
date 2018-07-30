@@ -4,6 +4,10 @@ var Local = function(){
     //时间间隔
     var INTERVAL = 200;
     var timer = null;
+    //计时次数
+    var timeCount = 0;
+    //时间
+    var time = 0;
     //绑定键盘事件
     var bindKeyEvent = function(){
         document.onkeydown = function (e) {
@@ -21,15 +25,44 @@ var Local = function(){
         }
     }
     var move = function(){
+        timerFnc();
         //判断是否可以下降
         if(!game.down()){
             game.fixed1();//让其固定
-            game.checkclear();//消行
+           var line = game.checkclear();//消行
+            if(line){
+                game.setScore(line);
+            }
             var gameOver = game.checkGameOver();//游戏结束
             if(gameOver){
                 stop();
+                game.gameOver(false);
             }else{
                 game.performNext(generateType(),generateDir());//使用下一个方块
+            }
+        }
+    }
+    //随机生成干扰行 lineNum:干扰行数
+    var gennerateBottomLine = function(lineNum){
+        var lines = [];
+        for(var i = 0; i < lineNum;i++){
+            var line = [];
+            for(var j = 0; j < 10; j++){
+                line.push(Math.ceil(Math.random() * 2 -1));
+            }
+            lines.push(line);
+        }
+        return lines;
+    }
+    //计时函数
+    var timerFnc = function(){
+        timeCount++;
+        if(timeCount == 5){
+            timeCount = 0;
+            time++;
+            game.setTimer(time);
+            if(time % 10 == 0){
+                game.addTailLines(gennerateBottomLine(1));
             }
         }
     }
@@ -46,6 +79,9 @@ var Local = function(){
         var doms = {
             gameDiv:document.getElementById('game'),
             nextDiv:document.getElementById('next'),
+            timeDiv:document.getElementById('time'),
+            scoreDiv:document.getElementById('score'),
+            gameOver:document.getElementById('gameOver'),
         }
         game = new Game();
         game.init(doms,generateType(),generateDir());

@@ -2,6 +2,14 @@ var Game = function(){
     //dom元素
     var gameDiv;
     var nextDiv;
+    //计时
+    var timeDiv;
+    //分数div
+    var scoreDiv;
+    //分数
+    var score = 0;
+    //游戏结束
+    var resultOver;
     //游戏矩阵
     var gameData = [
         [0,0,0,0,0,0,0,0,0,0],
@@ -166,6 +174,7 @@ var Game = function(){
     };
     //消行
     var checkclear = function () {
+        var line = 0;//消的行数
          for(var i = gameData.length-1; i >=0;i--){
              var clear = true;
              for(var j = 0; j<gameData[0].length;j++){
@@ -174,6 +183,7 @@ var Game = function(){
                  }
              }
              if(clear){
+                 line = line + 1;
                  for(var m=i;m>0;m--){
                     for(var n=0; n<gameData[0].length;n++){
                         gameData[m][n] = gameData[m-1][n];
@@ -185,8 +195,35 @@ var Game = function(){
                  i++;
              }
          }
+         return line;
     }
-    //游戏结束
+    //设置时间
+    var setTimer = function(time){
+          timeDiv.innerText = time;
+    }
+    //设置分数
+    var setScore = function(line){
+       var s = 0;
+        switch (line){
+            case 1:
+                s = 10;
+                break;
+            case 2:
+                s = 20;
+                break;
+            case 3:
+                s = 50;
+                break;
+            case 4:
+                s = 100;
+                break;
+            default:
+                break;
+        }
+        score = score + s;
+        scoreDiv.innerHTML = score;
+    }
+    //判断游戏是否结束
     var checkGameOver = function(){
         var gameOver = false;
         for(var i = 0; i < gameData[0].length;i++){
@@ -196,6 +233,32 @@ var Game = function(){
         }
         return gameOver;
     }
+    //游戏结束
+    var gameOver = function (win) {
+        if(win){
+            resultOver.innerText = '你赢了！'
+        }else{
+            resultOver.innerText = '你输了！'
+        }
+    }
+    //底部增加行
+    var addTailLines = function(lines){
+        //让gameData数据向上移动一行
+        for(var i = 0; i < gameData.length - lines.length;i++){
+            gameData[i] = gameData[i + lines.length];
+        }
+        //给复制gameData最底层数据并在底部多添加一行
+        for(var i = 0; i < lines.length; i++){
+            gameData[gameData.length - lines.length + i] = lines[i];
+        }
+        //恢复原点
+        cur.origin.x = cur.origin.x - lines.length;
+        if(cur.origin.x < 0){
+            cur.origin.x = 0;
+        }
+        refrechDiv(gameData,gameDivs);
+    }
+
     //使用下一个方块
     var performNext = function(type,dir){
         cur = next;
@@ -208,6 +271,9 @@ var Game = function(){
     var init = function(doms,type,dir){
         gameDiv = doms.gameDiv;
         nextDiv = doms.nextDiv;
+        timeDiv = doms.timeDiv;
+        scoreDiv = doms.scoreDiv;
+        resultOver = doms.gameOver;
         next = SquareFactory.prototype.make(type,dir);
         initDiv(gameDiv,gameData,gameDivs);
         initDiv(nextDiv,next.data,nextDivs);
@@ -224,4 +290,8 @@ var Game = function(){
     this.performNext = performNext;
     this.checkclear = checkclear;
     this.checkGameOver = checkGameOver;
+    this.setTimer = setTimer;
+    this.setScore = setScore;
+    this.gameOver = gameOver;
+    this.addTailLines = addTailLines;
 }
